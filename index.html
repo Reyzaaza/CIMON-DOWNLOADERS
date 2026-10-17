@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffd43b">
+  <meta name="description" content="Cimon Downloader — demo alat bantu tautan media dengan gaya cartoon kuning.">
+  <title>Cimon Downloader — Cartoon Media Tools</title>
+  <style>
+    :root {
+      --yellow: #ffd83d; --yellow2: #ffbd18; --cream: #fff9df;
+      --ink: #28251d; --muted: #6f6958; --white: #fffefa;
+      --line: #29251d; --green: #a8e6a1; --pink: #ffb8c9;
+      --shadow: 5px 6px 0 var(--ink); --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--ink); font-family: ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 10% 7%, rgba(255,255,255,.8) 0 3px, transparent 4px),
+        radial-gradient(circle at 92% 13%, rgba(255,255,255,.65) 0 4px, transparent 5px),
+        linear-gradient(135deg, #fff8d8 0%, #ffed9a 42%, #ffd34a 100%);
+      background-attachment: fixed;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .shell { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:20px 0; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:1000; letter-spacing:-.7px; font-size:1.18rem; }
+    .mascot { width:44px; height:44px; display:grid; place-items:center; border:3px solid var(--ink); border-radius:15px; background:var(--yellow); box-shadow:3px 3px 0 var(--ink); font-size:24px; transform:rotate(-5deg); }
+    .nav { display:flex; gap:8px; flex-wrap:wrap; }
+    .nav a { text-decoration:none; font-size:.86rem; font-weight:800; background:rgba(255,255,255,.62); border:2px solid var(--ink); padding:9px 13px; border-radius:999px; }
+    .hero { display:grid; grid-template-columns:1.12fr .88fr; gap:24px; align-items:center; padding:30px 0 24px; }
+    .eyebrow { display:inline-flex; gap:7px; align-items:center; border:2px solid var(--ink); border-radius:999px; padding:7px 12px; background:var(--green); font-size:.78rem; font-weight:900; box-shadow:2px 2px 0 var(--ink); }
+    h1 { font-size:clamp(2.6rem, 7vw, 5.4rem); line-height:.92; letter-spacing:-4px; margin:18px 0; max-width:680px; }
+    h1 span { color:#f28a00; text-shadow:2px 2px 0 var(--ink); -webkit-text-stroke:1px var(--ink); }
+    .hero p { color:#514b3b; font-weight:650; line-height:1.7; max-width:570px; }
+    .hero-art { min-height:280px; display:grid; place-items:center; position:relative; }
+    .orb { width:min(300px,75vw); aspect-ratio:1; border:4px solid var(--ink); border-radius:43% 57% 54% 46% / 49% 43% 57% 51%; background:linear-gradient(145deg,#ffe96d,#ffb800); box-shadow:10px 10px 0 var(--ink); display:grid; place-items:center; transform:rotate(6deg); position:relative; }
+    .phone { width:130px; height:205px; background:var(--white); border:4px solid var(--ink); border-radius:23px; box-shadow:5px 5px 0 var(--ink); transform:rotate(-9deg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:13px; }
+    .phone .screen { width:84px; height:82px; border:3px solid var(--ink); border-radius:17px; background:linear-gradient(140deg,#ffe05a,#ffb21c); display:grid; place-items:center; font-size:42px; }
+    .phone .bar { width:70px; height:8px; border:2px solid var(--ink); border-radius:99px; background:#c5efb6; }
+    .spark { position:absolute; font-size:38px; font-weight:1000; text-shadow:2px 2px 0 var(--ink); }
+    .spark.one { top:9%; right:6%; color:#ff7893; transform:rotate(14deg); }
+    .spark.two { bottom:6%; left:3%; color:#fff; transform:rotate(-12deg); }
+    .spark.three { top:10%; left:6%; color:#9de39a; font-size:28px; }
+    .panel { background:var(--white); border:3px solid var(--ink); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; }
+    .section-head { display:flex; justify-content:space-between; align-items:end; gap:14px; margin:26px 0 14px; }
+    h2 { font-size:clamp(1.35rem,3vw,2rem); letter-spacing:-.8px; margin:0; }
+    .section-head p { margin:0; color:var(--muted); font-size:.9rem; }
+    .tool-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+    .tool { min-height:116px; border:2px solid var(--ink); border-radius:18px; background:#fff7d0; padding:15px; text-align:left; box-shadow:3px 3px 0 var(--ink); transition:transform .15s, box-shadow .15s; }
+    .tool:hover, .tool.active { transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--ink); background:#ffe36a; }
+    .tool .emoji { display:block; font-size:26px; margin-bottom:9px; }
+    .tool b { display:block; font-size:.94rem; }
+    .tool small { display:block; color:#69614d; margin-top:4px; line-height:1.35; }
+    .download-panel { margin-top:25px; }
+    .panel-top { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .panel-icon { width:47px; height:47px; flex:0 0 47px; display:grid; place-items:center; border:2px solid var(--ink); border-radius:15px; background:var(--yellow); font-size:24px; }
+    .panel-top p { margin:4px 0 0; color:var(--muted); font-size:.9rem; }
+    .url-row { display:flex; gap:10px; }
+    .url-row input { min-width:0; flex:1; padding:15px 16px; border:2px solid var(--ink); border-radius:14px; outline:none; background:#fffdf3; }
+    .url-row input:focus, textarea:focus { box-shadow:0 0 0 4px rgba(255,216,61,.45); }
+    .btn { border:2px solid var(--ink); border-radius:14px; padding:13px 17px; background:var(--yellow); color:var(--ink); font-weight:950; box-shadow:3px 3px 0 var(--ink); transition:transform .15s,box-shadow .15s; }
+    .btn:hover { transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
+    .btn:active { transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+    .btn.dark { background:var(--ink); color:#fff8d8; }
+    .btn.soft { background:#fff; }
+    .button-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .hint { font-size:.82rem; color:var(--muted); line-height:1.55; margin:13px 0 0; }
+    .status { display:none; margin-top:16px; border:2px dashed var(--ink); border-radius:14px; padding:13px; background:#fff8d9; line-height:1.5; overflow-wrap:anywhere; }
+    .status.show { display:block; }
+    .status.error { background:#ffe0e6; }
+    .status.success { background:#e3f8dc; }
+    .results { display:grid; gap:10px; margin-top:12px; }
+    .result { display:flex; align-items:center; justify-content:space-between; gap:12px; border:2px solid var(--ink); border-radius:14px; padding:12px; background:#fff; }
+    .result-info { min-width:0; }
+    .result-info b { display:block; overflow-wrap:anywhere; }
+    .result-info small { color:var(--muted); }
+    .result a { flex:0 0 auto; text-decoration:none; }
+    .utility-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    textarea { width:100%; min-height:125px; resize:vertical; padding:13px; border:2px solid var(--ink); border-radius:14px; background:#fffdf3; outline:none; }
+    .mini-title { font-size:1.08rem; font-weight:1000; margin-bottom:6px; }
+    .field-note { color:var(--muted); font-size:.83rem; line-height:1.5; margin:5px 0 12px; }
+    .disclaimer { margin-top:22px; padding:14px 16px; border:2px solid var(--ink); border-radius:16px; background:#fff3b4; font-size:.86rem; line-height:1.6; }
+    footer { text-align:center; padding:28px 0 35px; color:#544d3d; font-size:.85rem; line-height:1.8; }
+    footer strong { color:var(--ink); }
+    .footer-stamp { display:inline-block; border:2px solid var(--ink); border-radius:999px; padding:6px 12px; background:#fff9df; font-weight:900; box-shadow:2px 2px 0 var(--ink); margin-bottom:7px; }
+    .hidden { display:none !important; }
+    @media (max-width:800px) {
+      .hero { grid-template-columns:1fr; padding-top:20px; }
+      .hero-art { min-height:230px; }
+      .orb { width:225px; }
+      .phone { transform:scale(.85) rotate(-9deg); }
+      .tool-grid { grid-template-columns:repeat(2,1fr); }
+      .section-head { align-items:start; flex-direction:column; }
+    }
+    @media (max-width:540px) {
+      .nav a { padding:8px 10px; font-size:.78rem; }
+      .topbar { align-items:flex-start; }
+      .brand { font-size:1rem; }
+      .hero h1 { letter-spacing:-2.5px; }
+      .panel { padding:16px; }
+      .url-row { flex-direction:column; }
+      .url-row .btn { width:100%; }
+      .utility-grid { grid-template-columns:1fr; }
+      .result { align-items:flex-start; flex-direction:column; }
+      .result a .btn { width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#" aria-label="Cimon Downloader beranda" style="text-decoration:none">
+      <span class="mascot">🍋</span><span>cimon<span style="color:#e18a00">.tools</span></span>
+    </a>
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="#tools">Tools</a><a href="#downloader">Downloader</a><a href="#utilities">Copy tools</a>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">⭐ SIMPLE • CUTE • USEFUL</span>
+        <h1>Link masuk.<br><span>Berhasil?</span> Cimon!</h1>
+        <p>Tempat praktis untuk memproses tautan media dan menyalin bio atau caption. Tampilannya ceria, kuning, dan cartoon — dibuat responsif untuk HP maupun desktop.</p>
+        <a class="btn dark" href="#downloader" style="display:inline-block;text-decoration:none;margin-top:5px">Mulai sekarang ↘</a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orb"><div class="phone"><div class="screen">⬇️</div><div class="bar"></div><div class="bar" style="width:52px;background:#ffb8c9"></div></div></div>
+        <span class="spark one">✦</span><span class="spark two">✿</span><span class="spark three">✧</span>
+      </div>
+    </section>
+
+    <section id="tools">
+      <div class="section-head"><h2>✨ Pilih tools favorit</h2><p>Tap salah satu untuk memilih jenis proses.</p></div>
+      <div class="tool-grid">
+        <button class="tool active" data-tool="all" data-label="Media Downloader"><span class="emoji">📥</span><b>Media Downloader</b><small>Proses link media yang didukung</small></button>
+        <button class="tool" data-tool="video" data-label="Video Downloader"><span class="emoji">🎬</span><b>Video</b><small>Video dari platform tertentu</small></button>
+        <button class="tool" data-tool="music" data-label="Music Downloader"><span class="emoji">🎵</span><b>Music</b><small>Link musik yang didukung</small></button>
+        <button class="tool" data-tool="audio" data-label="Audio Downloader"><span class="emoji">🎧</span><b>Audio</b><small>Audio dari sumber kompatibel</small></button>
+        <button class="tool" data-tool="profile" data-label="Profile Photo"><span class="emoji">🧑‍🎨</span><b>Foto profil</b><small>Jika platform menyediakan URL foto</small></button>
+        <button class="tool" data-tool="bypass" data-label="Link Bypass"><span class="emoji">🔓</span><b>Link Bypass</b><small>Coba perluas tautan pendek</small></button>
+        <button class="tool" data-tool="instagram" data-label="Instagram"><span class="emoji">📸</span><b>Instagram</b><small>Reels atau post yang dapat diakses</small></button>
+        <button class="tool" data-tool="tiktok" data-label="TikTok"><span class="emoji">🎶</span><b>TikTok</b><small>Video yang dapat diakses</small></button>
+      </div>
+    </section>
+
+    <section class="panel download-panel" id="downloader">
+      <div class="panel-top">
+        <div class="panel-icon" id="selectedIcon">📥</div>
+        <div><h2 id="selectedTitle">Media Downloader</h2><p>Tempel link publik yang ingin diproses.</p></div>
+      </div>
+      <form id="resolveForm">
+        <div class="url-row">
+          <input id="urlInput" type="url" placeholder="https://contoh.com/video..." autocomplete="url" maxlength="2048" required aria-label="URL yang ingin diproses">
+          <button class="btn" id="submitBtn" type="submit">Proses link ✨</button>
+        </div>
+        <div class="button-row">
+          <button class="btn soft" id="pasteBtn" type="button">📋 Tempel dari clipboard</button>
+          <button class="btn soft" id="clearBtn" type="button">Bersihkan</button>
+        </div>
+      </form>
+      <p class="hint">Gunakan tautan publik yang memang boleh Anda akses. Hasil bergantung pada platform, batasan wilayah, login, dan perubahan layanan pihak ketiga. Jangan gunakan untuk melanggar hak cipta atau privasi.</p>
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+      <div id="results" class="results"></div>
+    </section>
+
+    <section id="utilities">
+      <div class="section-head"><h2>🧸 Copy tools</h2><p>Diproses lokal di browser — teks tidak dikirim ke backend.</p></div>
+      <div class="utility-grid">
+        <div class="panel">
+          <div class="mini-title">✍️ Salin bio / caption</div>
+          <p class="field-note">Tempel teks bio atau caption di bawah, lalu salin hasilnya. Fitur ini tidak mengambil data privat dari akun.</p>
+          <textarea id="copyText" placeholder="Tempel bio atau caption di sini..."></textarea>
+          <div class="button-row"><button class="btn" id="copyBtn" type="button">Salin teks</button><button class="btn soft" id="clearTextBtn" type="button">Hapus teks</button></div>
+          <div id="copyStatus" class="hint" aria-live="polite"></div>
+        </div>
+        <div class="panel">
+          <div class="mini-title">🪄 Rapikan caption</div>
+          <p class="field-note">Rapikan spasi berlebih dan baris kosong tanpa mengubah isi utama teks.</p>
+          <textarea id="cleanText" placeholder="Tempel caption yang ingin dirapikan..."></textarea>
+          <div class="button-row"><button class="btn" id="cleanBtn" type="button">Rapikan teks</button><button class="btn soft" id="copyCleanBtn" type="button">Salin hasil</button></div>
+          <div id="cleanStatus" class="hint" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <strong>💛 Catatan demo:</strong> Cimon Downloader adalah proyek demo independen, bukan layanan resmi TikTok, Instagram, YouTube, Facebook, Spotify, atau platform lainnya. Integrasi scraper dapat gagal ketika layanan sumber berubah atau membatasi akses. Unduh hanya konten yang Anda miliki atau berhak gunakan.
+    </div>
+  </main>
+
+  <footer class="shell">
+    <div class="footer-stamp">🍋 Cimon Downloader</div><br>
+    Website is demo by <strong>ReyzaDev</strong>.<br>
+    <span>Made for learning • Use responsibly • © <span id="year"></span> ReyzaDev</span>
+  </footer>
+
+  <script>
+    const state = { tool: "all", label: "Media Downloader" };
+    const icons = { all:"📥", video:"🎬", music:"🎵", audio:"🎧", profile:"🧑‍🎨", bypass:"🔓", instagram:"📸", tiktok:"🎶" };
+    const $ = (id) => document.getElementById(id);
+    const statusEl = $("status"), resultsEl = $("results"), submitBtn = $("submitBtn");
+
+    $("year").textContent = new Date().getFullYear();
+
+    document.querySelectorAll(".tool").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".tool").forEach((b) => b.classList.remove("active"));
+        button.classList.add("active");
+        state.tool = button.dataset.tool;
+        state.label = button.dataset.label;
+        $("selectedTitle").textContent = state.label;
+        $("selectedIcon").textContent = icons[state.tool] || "📥";
+        $("downloader").scrollIntoView({ behavior:"smooth", block:"start" });
+      });
+    });
+
+    function showStatus(message, kind = "") {
+      statusEl.textContent = message;
+      statusEl.className = "status show" + (kind ? " " + kind : "");
+    }
+    function safeUrl(raw) {
+      try {
+        const u = new URL(raw);
+        return ["http:", "https:"].includes(u.protocol);
+      } catch { return false; }
+    }
+    function hostLabel(raw) {
+      try { return new URL(raw).hostname.replace(/^www\./, ""); } catch { return "Link"; }
+    }
+    function renderResults(items) {
+      resultsEl.replaceChildren();
+      items.forEach((item, index) => {
+        const row = document.createElement("div"); row.className = "result";
+        const info = document.createElement("div"); info.className = "result-info";
+        const title = document.createElement("b"); title.textContent = item.title || `Hasil ${index + 1}`;
+        const meta = document.createElement("small"); meta.textContent = [item.quality, item.type].filter(Boolean).join(" • ") || "Tautan tersedia";
+        info.append(title, meta);
+        const link = document.createElement("a");
+        link.href = item.url; link.target = "_blank"; link.rel = "noopener noreferrer";
+        const btn = document.createElement("span"); btn.className = "btn"; btn.textContent = "Buka link ↗";
+        link.append(btn); row.append(info, link); resultsEl.append(row);
+      });
+    }
+
+    $("resolveForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const url = $("urlInput").value.trim();
+      resultsEl.replaceChildren();
+      if (!safeUrl(url)) { showStatus("Masukkan URL http:// atau https:// yang valid.", "error"); return; }
+      submitBtn.disabled = true; submitBtn.textContent = "Memproses…";
+      showStatus("Sedang mencoba memproses tautan dari " + hostLabel(url) + "…");
+      try {
+        const response = await fetch("/api/resolve", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, tool: state.tool })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.message || "Link belum bisa diproses. Coba lagi nanti.");
+        const items = Array.isArray(data.downloads) ? data.downloads : [];
+        if (!items.length) throw new Error("Server tidak mengembalikan tautan hasil.");
+        showStatus(data.message || "Selesai! Pilih salah satu tautan di bawah.", "success");
+        renderResults(items);
+      } catch (error) {
+        showStatus(error.message || "Terjadi kesalahan. Pastikan server aktif dan coba lagi.", "error");
+      } finally {
+        submitBtn.disabled = false; submitBtn.textContent = "Proses link ✨";
+      }
+    });
+
+    $("pasteBtn").addEventListener("click", async () => {
+      try {
+        if (!navigator.clipboard?.readText) throw new Error("Clipboard tidak tersedia. Tempel URL secara manual.");
+        $("urlInput").value = await navigator.clipboard.readText();
+        showStatus("Link berhasil ditempel. Tekan “Proses link” untuk melanjutkan.", "success");
+      } catch (error) { showStatus(error.message || "Tidak dapat membaca clipboard.", "error"); }
+    });
+    $("clearBtn").addEventListener("click", () => { $("urlInput").value = ""; resultsEl.replaceChildren(); statusEl.className = "status"; });
+    async function copyToClipboard(text) {
+      if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+      const area = document.createElement("textarea"); area.value = text; area.style.position = "fixed"; area.style.opacity = "0";
+      document.body.append(area); area.select(); const ok = document.execCommand("copy"); area.remove();
+      if (!ok) throw new Error("Browser tidak mengizinkan penyalinan otomatis.");
+    }
+    $("copyBtn").addEventListener("click", async () => {
+      const text = $("copyText").value;
+      if (!text.trim()) { $("copyStatus").textContent = "Isi teks terlebih dahulu."; return; }
+      try { await copyToClipboard(text); $("copyStatus").textContent = "Teks berhasil disalin! 💛"; }
+      catch (e) { $("copyStatus").textContent = e.message; }
+    });
+    $("clearTextBtn").addEventListener("click", () => { $("copyText").value = ""; $("copyStatus").textContent = ""; });
+    $("cleanBtn").addEventListener("click", () => {
+      const cleaned = $("cleanText").value.replace(/[ \t]+/g, " ").replace(/\n[ \t]+/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+      $("cleanText").value = cleaned;
+      $("cleanStatus").textContent = cleaned ? "Caption sudah dirapikan." : "Masukkan caption terlebih dahulu.";
+    });
+    $("copyCleanBtn").addEventListener("click", async () => {
+      const text = $("cleanText").value;
+      if (!text.trim()) { $("cleanStatus").textContent = "Masukkan caption terlebih dahulu."; return; }
+      try { await copyToClipboard(text); $("cleanStatus").textContent = "Hasil berhasil disalin! 💛"; }
+      catch (e) { $("cleanStatus").textContent = e.message; }
+    });
+  </script>
+</body>
+</html>
